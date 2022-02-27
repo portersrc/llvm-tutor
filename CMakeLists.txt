@@ -5,7 +5,7 @@ project(llvm-tutor)
 # 1. VERIFY LLVM INSTALLATION DIR
 # This is just a bit of a sanity checking.
 #===============================================================================
-set(LT_LLVM_INSTALL_DIR "" CACHE PATH "LLVM installation directory")
+set(LT_LLVM_INSTALL_DIR "C:/Users/rudy/h/wo/llvm/llvm-project/build" CACHE PATH "LLVM installation directory")
 
 # 1.1 Check the "include| directory
 set(LT_LLVM_INCLUDE_DIR "${LT_LLVM_INSTALL_DIR}/include/llvm")
@@ -46,11 +46,15 @@ endif()
 # `find_package(llvm)`. So there's no need to add it here.
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
-find_package(LLVM 13.0.0 REQUIRED CONFIG)
+#find_package(LLVM 13.0.0 REQUIRED CONFIG)
+find_package(LLVM 11.0.0 REQUIRED CONFIG)
 
 # Another sanity check
-if(NOT "13" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
-  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION_MAJOR}, but need LLVM 13")
+#if(NOT "13" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
+#  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION_MAJOR}, but need LLVM 13")
+#endif()
+if(NOT "11" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
+  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION_MAJOR}, but need LLVM 11")
 endif()
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
@@ -92,11 +96,11 @@ endif()
 # -fvisibility-inlines-hidden is set when building LLVM and on Darwin warnings
 # are triggered if llvm-tutor is built without this flag (though otherwise it
 # builds fine). For consistency, add it here too.
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-fvisibility-inlines-hidden" SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG)
-if (${SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG} EQUAL "1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
-endif()
+#include(CheckCXXCompilerFlag)
+#check_cxx_compiler_flag("-fvisibility-inlines-hidden" SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG)
+#if (${SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG} EQUAL "1")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
+#endif()
 
 # Set the build directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")

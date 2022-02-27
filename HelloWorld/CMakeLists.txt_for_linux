@@ -1,9 +1,3 @@
-#===============================================================================
-# CMAKE SCRIPT FOR WINDOWS
-# This script is very similar to CmakeLists.txt with a few minor tweaks/changes
-# required for Windows only.
-#===============================================================================
-
 cmake_minimum_required(VERSION 3.13.4)
 project(llvm-tutor-hello-world)
 
@@ -18,15 +12,11 @@ set(LT_LLVM_INSTALL_DIR "" CACHE PATH "LLVM installation directory")
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
 # FIXME: This is a warkaround for #25. Remove once resolved and use
-# find_package(LLVM 11.0.0 REQUIERED CONFIG) instead.
+# find_package(LLVM 11.0.0 REQUIRED CONFIG) instead.
 find_package(LLVM REQUIRED CONFIG)
 
 # HelloWorld includes headers from LLVM - update the include paths accordingly
-include_directories(${LLVM_INCLUDE_DIRS})
-
-# Load LLVM's CMake macros and functions
-list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
-include(AddLLVM)
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
 
 #===============================================================================
 # 2. LLVM-TUTOR BUILD CONFIGURATION
@@ -42,17 +32,9 @@ endif()
 #===============================================================================
 # 3. ADD THE TARGET
 #===============================================================================
-# The following configuration is based on:
-#   https://github.com/llvm/llvm-project/blob/release/10.x/llvm/lib/Transforms/Hello/CMakeLists.txt
-if(WIN32 OR CYGWIN)
-  set(LLVM_LINK_COMPONENTS Core Support)
-endif()
+add_library(HelloWorld SHARED HelloWorld.cpp)
 
-add_llvm_library( HelloWorld MODULE BUILDTREE_ONLY
-  HelloWorld.cpp
-
-  DEPENDS
-  intrinsics_gen
-  PLUGIN_TOOL
-  opt
-  )
+# Allow undefined symbols in shared objects on Darwin (this is the default
+# behaviour on Linux)
+target_link_libraries(HelloWorld
+  "$<$<PLATFORM_ID:Darwin>:-undefined dynamic_lookup>")
